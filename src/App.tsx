@@ -1,5 +1,13 @@
+import GlobalStyles from './components/ui/GlobalStyles'
+import Pages from './pages'
+
 function App() {
-	return <h1>Companies list</h1>
+	return (
+		<>
+			<GlobalStyles />
+			<Pages />
+		</>
+	)
 }
 
 export default App
