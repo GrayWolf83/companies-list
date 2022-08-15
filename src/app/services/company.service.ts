@@ -17,6 +17,8 @@ const companyService = {
 	},
 	delete: async (id: string) => {
 		const { data } = await httpService.delete(endpoint + '/' + id)
+		console.log('delete data', data)
+
 		return data
 	},
 }

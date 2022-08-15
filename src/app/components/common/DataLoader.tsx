@@ -22,7 +22,7 @@ const DataLoader = ({ children }: IProps) => {
 		}
 	}, [dataLoaded, dispatch])
 
-	return <>{isCompanyLoading ? <Loader /> : children}</>
+	return <>{isCompanyLoading && !dataLoaded ? <Loader /> : children}</>
 }
 
 export default DataLoader

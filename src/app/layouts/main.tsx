@@ -10,7 +10,7 @@ const Main = styled.main`
 	position: fixed;
 	top: 70px;
 	width: 100%;
-	height: calc(100vh - 70px);
+	min-height: calc(100vh - 70px);
 	padding: 10px;
 `
 

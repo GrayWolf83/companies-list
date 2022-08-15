@@ -7,7 +7,7 @@ export default createGlobalStyle`
     }
 
     html, body {
-        height: 100%;
+        min-height: 100vh;
         margin:0;
         color: #fff;
     }
@@ -39,7 +39,7 @@ export default createGlobalStyle`
         max-width: 100%;
     }
 
-    h1, h2, h3, h4 {
+    h1, h2, h3, h4, p {
         margin: 0;
     }
 `

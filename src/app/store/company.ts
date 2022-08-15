@@ -55,9 +55,9 @@ const companySlice = createSlice({
 		companyAdded(state, action: PayloadAction<ICompany>) {
 			state.entities = [action.payload, ...state.entities]
 		},
-		companyDeleted(state, action: PayloadAction<string>) {
+		companyDeleted(state, action: PayloadAction<{ _id: string }>) {
 			state.entities = state.entities.filter(
-				(item) => item._id !== action.payload,
+				(item) => item._id !== action.payload._id,
 			)
 		},
 		companyLoadingEnd(state) {
@@ -89,12 +89,10 @@ export const loadCompaniesList = () => async (dispatch: AppDispatch) => {
 }
 
 export const loadCompaniesExtraList =
-	() => async (dispatch: AppDispatch, state: RootState) => {
+	(cursor: string) => async (dispatch: AppDispatch) => {
 		dispatch(companyLoadingStart())
 		try {
-			const payload = await companyService.getExtraList(
-				state.companies.cursor,
-			)
+			const payload = await companyService.getExtraList(cursor)
 			dispatch(companiesExtraLoaded(payload))
 		} catch (error: any) {
 			if (error?.message) {
@@ -142,6 +140,10 @@ export const getCompaniesList = () => (state: RootState) => {
 
 export const getCompaniesHasNextPage = () => (state: RootState) => {
 	return state.companies.hasNextPage
+}
+
+export const getCompaniesCursor = () => (state: RootState) => {
+	return state.companies.cursor
 }
 
 export const getCompaniesLoadingStatus = () => (state: RootState) => {
