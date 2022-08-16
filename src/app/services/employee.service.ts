@@ -3,12 +3,14 @@ import httpService from './http.service'
 const endpoint = 'employee'
 
 const employeeService = {
-	getList: async () => {
-		const { data } = await httpService.get(endpoint)
+	getList: async (company: string, cursor?: string) => {
+		const { data } = await httpService.get(endpoint + '/' + company)
 		return data
 	},
-	getExtraList: async (cursor: string) => {
-		const { data } = await httpService.get(endpoint + '?cursor=' + cursor)
+	getExtraList: async (company: string, cursor: string) => {
+		const { data } = await httpService.get(
+			endpoint + '/' + company + '?cursor=' + cursor,
+		)
 		return data
 	},
 	add: async (payload: {

@@ -14,7 +14,7 @@ const AppButton = styled.button`
 	}
 
 	:disabled {
-		background-color: #ff8a65;
+		background-color: rgb(120, 120, 120);
 		cursor: auto;
 	}
 `

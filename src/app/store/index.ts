@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import errorsReducer from './error'
 import companyReducer from './company'
+import employeeReducer from './employee'
 
 const store = configureStore({
 	reducer: {
 		errors: errorsReducer,
 		companies: companyReducer,
+		employees: employeeReducer,
 	},
 })
 

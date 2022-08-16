@@ -6,6 +6,7 @@ import companyService from '../services/company.service'
 
 type CompanyState = {
 	entities: ICompany[]
+	search: ICompany[]
 	hasNextPage: boolean
 	cursor: string
 	isLoading: boolean
@@ -14,6 +15,7 @@ type CompanyState = {
 
 const initialState: CompanyState = {
 	entities: [],
+	search: [],
 	hasNextPage: false,
 	cursor: '',
 	isLoading: true,
@@ -60,6 +62,21 @@ const companySlice = createSlice({
 				(item) => item._id !== action.payload._id,
 			)
 		},
+		companyChanged(
+			state,
+			action: PayloadAction<{ _id: string; inc: number }>,
+		) {
+			state.entities = state.entities.map((item) => {
+				if (item._id === action.payload._id) {
+					return {
+						...item,
+						employeesCount:
+							item.employeesCount + action.payload.inc,
+					}
+				}
+				return item
+			})
+		},
 		companyLoadingEnd(state) {
 			state.isLoading = false
 		},
@@ -73,6 +90,7 @@ const {
 	companyLoadingEnd,
 	companyAdded,
 	companyDeleted,
+	companyChanged,
 } = companySlice.actions
 
 export const loadCompaniesList = () => async (dispatch: AppDispatch) => {
@@ -80,9 +98,7 @@ export const loadCompaniesList = () => async (dispatch: AppDispatch) => {
 		const payload = await companyService.getList()
 		dispatch(companiesLoaded(payload))
 	} catch (error: any) {
-		if (error?.message) {
-			dispatch(setLoadingError(error.message))
-		}
+		dispatch(setLoadingError(error))
 	} finally {
 		dispatch(companyLoadingEnd())
 	}
@@ -95,9 +111,7 @@ export const loadCompaniesExtraList =
 			const payload = await companyService.getExtraList(cursor)
 			dispatch(companiesExtraLoaded(payload))
 		} catch (error: any) {
-			if (error?.message) {
-				dispatch(setLoadingError(error.message))
-			}
+			dispatch(setLoadingError(error))
 		} finally {
 			dispatch(companyLoadingEnd())
 		}
@@ -111,9 +125,7 @@ export const addCompany =
 			const payload = await companyService.add(data)
 			dispatch(companyAdded(payload))
 		} catch (error: any) {
-			if (error?.message) {
-				dispatch(setLoadingError(error.message))
-			}
+			dispatch(setLoadingError(error))
 		} finally {
 			dispatch(companyLoadingEnd())
 		}
@@ -126,16 +138,23 @@ export const deleteCompany =
 			const payload = await companyService.delete(data)
 			dispatch(companyDeleted(payload))
 		} catch (error: any) {
-			if (error?.message) {
-				dispatch(setLoadingError(error.message))
-			}
+			dispatch(setLoadingError(error))
 		} finally {
 			dispatch(companyLoadingEnd())
 		}
 	}
 
+export const changeCompany =
+	(data: { _id: string; inc: number }) => async (dispatch: AppDispatch) => {
+		dispatch(companyChanged(data))
+	}
+
 export const getCompaniesList = () => (state: RootState) => {
 	return state.companies.entities
+}
+
+export const getSearchedCompaniesList = () => (state: RootState) => {
+	return state.companies.search
 }
 
 export const getCompaniesHasNextPage = () => (state: RootState) => {

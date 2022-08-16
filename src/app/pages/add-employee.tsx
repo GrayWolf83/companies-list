@@ -1,28 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import FormComponent from '../components/common/form/FormComponent'
 import TextField from '../components/common/form/TextField'
 import { addEmployeeSchema } from '../validation'
 import styled from 'styled-components'
-import { useAppDispatch } from '../hooks/useAppReduxHooks'
-import { addCompany } from '../store/company'
+import { useAppDispatch, useAppSelector } from '../hooks/useAppReduxHooks'
 import { useNavigate } from 'react-router-dom'
-import SelectField from '../components/common/form/SelectField'
+import AppModal from '../components/common/AppModal'
+import { addEmployee, getEmployeesCurrentCompany } from '../store/employee'
 
 const PageTitle = styled.h2`
 	text-align: center;
 `
 
 const AddEmployee = () => {
+	const [showSearchModal, setSearchShowModal] = useState(false)
 	const dispatch = useAppDispatch()
+	const currentCompany = useAppSelector(getEmployeesCurrentCompany())
 	const navigate = useNavigate()
 
 	const onSubmit = (data: { [key: string]: string }) => {
 		const reqData = {
-			name: data.name,
-			address: data.address,
+			firstName: data.firstName,
+			lastName: data.lastName,
+			position: data.position,
+			company: currentCompany,
 		}
 
-		dispatch(addCompany(reqData))
+		dispatch(addEmployee(reqData))
 		navigate('/')
 	}
 
@@ -54,8 +58,8 @@ const AddEmployee = () => {
 					onChange={() => {}}
 					error={null}
 				/>
-				{/* <SelectField /> */}
 			</FormComponent>
+			<AppModal show={showSearchModal} setShow={setSearchShowModal} />
 		</>
 	)
 }
