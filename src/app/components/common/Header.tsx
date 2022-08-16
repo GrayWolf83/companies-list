@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
 const HeaderContainer = styled.header`
@@ -14,7 +15,9 @@ const HeaderText = styled.h2``
 const Header = () => {
 	return (
 		<HeaderContainer>
-			<HeaderText>Список компаний</HeaderText>
+			<Link to='/'>
+				<HeaderText>Список компаний</HeaderText>
+			</Link>
 		</HeaderContainer>
 	)
 }

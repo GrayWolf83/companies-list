@@ -25,8 +25,10 @@ const errorSlice = createSlice({
 const { loadingError, errorCleared } = errorSlice.actions
 
 export const setLoadingError =
-	(error: string) => async (dispatch: AppDispatch) => {
-		dispatch(loadingError(error))
+	(error: any) => async (dispatch: AppDispatch) => {
+		if (error?.response?.data?.message) {
+			dispatch(loadingError(error.response.data.message))
+		}
 	}
 
 export const clearErrors = () => (dispatch: AppDispatch) => {

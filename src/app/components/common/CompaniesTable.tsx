@@ -1,6 +1,4 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
+import React, { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../../hooks/useAppReduxHooks'
 import {
 	deleteCompany,
@@ -10,71 +8,48 @@ import {
 	getCompaniesLoadingStatus,
 	loadCompaniesExtraList,
 } from '../../store/company'
-import AppButton from '../ui/AppButton'
+import {
+	clearEmployeesList,
+	getEmployeesCurrentCompany,
+	loadEmployeesList,
+	setEmployeesCurrentCompany,
+} from '../../store/employee'
 import AppTable from '../ui/AppTable'
 import Loader from '../ui/Loader'
 import TableContainer from '../ui/TableContainer'
-
-const TitleBlock = styled.div`
-	width: 100%;
-	display: flex;
-	justify-content: space-between;
-`
-const ButtonsBlock = styled.div`
-	display: flex;
-	justify-content: flex-end;
-
-	* {
-		margin-left: 10px;
-	}
-`
-const TableButton = styled.div`
-	bottom: 5px;
-	left: 5px;
-	z-index: 3;
-`
-
-const TableTr = styled.tr`
-	cursor: pointer;
-
-	:hover {
-		color: #ff8a65;
-	}
-
-	&.active {
-		color: #fa6334;
-	}
-`
+import LoadButton from '../table/LoadButton'
+import TableTitle from '../table/TableTitle'
+import TableThead from '../table/TableThead'
+import TableTbodyCompany from '../table/TableTbodyCompany'
 
 const CompaniesTable = () => {
-	const [currentCompany, setCurrentCompany] = useState('')
+	const [current, setCurrent] = useState('')
+	const currentCompany = useAppSelector(getEmployeesCurrentCompany())
 	const [checkedAll, setChecked] = useState(false)
 	const dispatch = useAppDispatch()
 	const companies = useAppSelector(getCompaniesList())
 	const companyLoading = useAppSelector(getCompaniesLoadingStatus())
 	const hasNextPage = useAppSelector(getCompaniesHasNextPage())
 	const cursorCompanies = useAppSelector(getCompaniesCursor())
-	const navigate = useNavigate()
+
+	useEffect(() => {
+		setCurrent(currentCompany)
+	}, [])
 
 	const changeCurrentCompany = (id: string) => {
-		if (currentCompany === id) {
-			setCurrentCompany('')
+		if (current === id) {
+			setCurrent('')
+			dispatch(clearEmployeesList())
 		} else {
-			setCurrentCompany(id)
-		}
-	}
-
-	const changeChecked = () => {
-		if (checkedAll) {
-			setChecked(false)
-		} else {
-			setChecked(true)
+			setCurrent(id)
+			dispatch(setEmployeesCurrentCompany(id))
+			dispatch(loadEmployeesList(id))
 		}
 	}
 
 	const handleDeleteCompany = () => {
-		dispatch(deleteCompany(currentCompany))
-		setCurrentCompany('')
+		dispatch(deleteCompany(current))
+		setCurrent('')
 	}
 
 	const loadExtraListCompanies = () => {
@@ -88,84 +63,34 @@ const CompaniesTable = () => {
 			) : (
 				<>
 					<div>
-						<TitleBlock>
-							<h3>Компании</h3>
-							<ButtonsBlock>
-								<AppButton
-									onClick={() => navigate('/add-company')}>
-									Добавить
-								</AppButton>
-								<AppButton
-									disabled={!Boolean(currentCompany)}
-									onClick={handleDeleteCompany}>
-									Удалить
-								</AppButton>
-							</ButtonsBlock>
-						</TitleBlock>
+						<TableTitle
+							title='Компании'
+							addPath='/add-company'
+							deleteBtnDisabled={!Boolean(current)}
+							deleteBtnonClick={handleDeleteCompany}
+							showAddButton={true}
+						/>
 
 						<AppTable>
-							<thead>
-								<tr>
-									<th scope='col'>
-										<input
-											type='checkbox'
-											onChange={changeChecked}
-											checked={checkedAll}
-										/>
-									</th>
-									<th align='left' scope='col'>
-										Название
-									</th>
-									<th align='left' scope='col'>
-										Количество
-										<br /> сотрудников
-									</th>
-									<th align='left' scope='col'>
-										Адрес
-									</th>
-								</tr>
-							</thead>
-							<tbody>
-								{companies.map((company) => (
-									<TableTr
-										className={
-											currentCompany === company._id
-												? 'active'
-												: ''
-										}
-										key={company._id}
-										onClick={() =>
-											changeCurrentCompany(company._id)
-										}>
-										<th scope='row'>
-											<input
-												type='checkbox'
-												onChange={() =>
-													changeCurrentCompany(
-														company._id,
-													)
-												}
-												checked={
-													currentCompany ===
-														company._id ||
-													checkedAll
-												}
-											/>
-										</th>
-										<td>{company.name}</td>
-										<td>{company.employeesCount}</td>
-										<td>{company.address}</td>
-									</TableTr>
-								))}
-							</tbody>
+							<TableThead
+								checkboxOnChange={setChecked}
+								checkboxChecked={checkedAll}
+								names={[
+									'Название',
+									'Количество сотрудников',
+									'Адрес',
+								]}
+							/>
+							<TableTbodyCompany
+								items={companies}
+								current={current}
+								changeCurrent={changeCurrentCompany}
+								checkedAll={checkedAll}
+							/>
 						</AppTable>
 					</div>
 					{hasNextPage && (
-						<TableButton>
-							<AppButton onClick={loadExtraListCompanies}>
-								Загрузить еще
-							</AppButton>
-						</TableButton>
+						<LoadButton onClick={loadExtraListCompanies} />
 					)}
 				</>
 			)}

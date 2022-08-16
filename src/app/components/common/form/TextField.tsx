@@ -16,7 +16,7 @@ const FieldBlock = styled.div`
 	margin-bottom: 10px;
 `
 const FieldInput = styled.input`
-	width: calc(100% - 22px);
+	width: 100%;
 	font-size: 18px;
 	padding: 10px;
 	border: 1px solid #fff;

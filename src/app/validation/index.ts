@@ -26,13 +26,6 @@ export const addCompanySchema = yup.object().shape({
 })
 
 export const addEmployeeSchema = yup.object().shape({
-	company: yup
-		.string()
-		.required({
-			name: 'company',
-			text: 'Поле "Компания" обязательно для заполнения',
-		})
-		.trim(),
 	position: yup
 		.string()
 		.required({
@@ -64,6 +57,16 @@ export const addEmployeeSchema = yup.object().shape({
 		.min(2, {
 			name: 'firstName',
 			text: 'Длина поля "Имя" не менее 2 символов',
+		})
+		.trim(),
+})
+
+export const searchCompanySchema = yup.object().shape({
+	value: yup
+		.string()
+		.required({
+			name: 'value',
+			text: 'Поле "Поиск" обязательно для заполнения',
 		})
 		.trim(),
 })
