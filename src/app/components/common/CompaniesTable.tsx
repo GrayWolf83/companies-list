@@ -23,7 +23,7 @@ import TableThead from '../table/TableThead'
 import TableTbodyCompany from '../table/TableTbodyCompany'
 
 const CompaniesTable = () => {
-	const [current, setCurrent] = useState('')
+	const [current, setCurrent] = useState<string[]>([])
 	const currentCompany = useAppSelector(getEmployeesCurrentCompany())
 	const [checkedAll, setChecked] = useState(false)
 	const dispatch = useAppDispatch()
@@ -33,23 +33,32 @@ const CompaniesTable = () => {
 	const cursorCompanies = useAppSelector(getCompaniesCursor())
 
 	useEffect(() => {
-		setCurrent(currentCompany)
+		setCurrent([currentCompany])
 	}, [])
 
+	useEffect(() => {
+		checkedAll
+			? setCurrent(companies.map((item) => item._id))
+			: setCurrent([])
+	}, [checkedAll, companies])
+
 	const changeCurrentCompany = (id: string) => {
-		if (current === id) {
-			setCurrent('')
+		if (current.includes(id)) {
+			setCurrent(current.filter((item) => item !== id))
 			dispatch(clearEmployeesList())
 		} else {
-			setCurrent(id)
+			setCurrent((prev) => [...prev, id])
 			dispatch(setEmployeesCurrentCompany(id))
 			dispatch(loadEmployeesList(id))
 		}
 	}
 
 	const handleDeleteCompany = () => {
-		dispatch(deleteCompany(current))
-		setCurrent('')
+		current.forEach((item) => {
+			dispatch(deleteCompany(item))
+		})
+
+		setCurrent([])
 	}
 
 	const loadExtraListCompanies = () => {
@@ -85,7 +94,6 @@ const CompaniesTable = () => {
 								items={companies}
 								current={current}
 								changeCurrent={changeCurrentCompany}
-								checkedAll={checkedAll}
 							/>
 						</AppTable>
 					</div>

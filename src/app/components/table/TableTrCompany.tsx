@@ -16,27 +16,21 @@ const TableTr = styled.tr`
 
 interface IProps {
 	item: ICompany
-	current: string
-	checkedAll: boolean
+	current: string[]
 	changeCurrent: (id: string) => void
 }
 
-const TableTrCompanyItem = ({
-	item,
-	current,
-	checkedAll,
-	changeCurrent,
-}: IProps) => {
+const TableTrCompanyItem = ({ item, current, changeCurrent }: IProps) => {
 	return (
 		<TableTr
 			key={item._id}
-			className={current === item._id ? 'active' : ''}
+			className={current.includes(item._id) ? 'active' : ''}
 			onClick={() => changeCurrent(item._id)}>
 			<th scope='row'>
 				<input
 					type='checkbox'
 					onChange={() => changeCurrent(item._id)}
-					checked={current === item._id || checkedAll}
+					checked={current.includes(item._id)}
 				/>
 			</th>
 			<td>{item.name}</td>
