@@ -34,7 +34,7 @@ const CompaniesTable = () => {
 
 	useEffect(() => {
 		setCurrent([currentCompany])
-	}, [])
+	}, [currentCompany])
 
 	useEffect(() => {
 		checkedAll
